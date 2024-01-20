@@ -1,4 +1,4 @@
-package io.cucumber.fungenerator
+package io.picklegames.fungenerator
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
