@@ -1,6 +1,6 @@
 package io.picklegames.fungenerator.dto
 
-data class GameDto(
+data class UserDto(
     val id: Long,
     val name: String
 )
