@@ -11,7 +11,8 @@ data class Game(
     @Id @GeneratedValue var id: Long?,
     val name: String,
     @Relationship("LIKES", direction = INCOMING) val likes: MutableSet<User> = mutableSetOf(),
-    @Relationship("HAS", direction = INCOMING) val owners: MutableSet<User> = mutableSetOf()
+    @Relationship("HAS", direction = INCOMING) val owners: MutableSet<User> = mutableSetOf(),
+    @Relationship("RATED", direction = INCOMING) val ratings: MutableSet<Rating> = mutableSetOf()
 ) {
 
     constructor(name: String) : this(null, name)
