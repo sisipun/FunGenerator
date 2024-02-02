@@ -13,17 +13,23 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional(readOnly = true)
 class DefaultGameService(
-    private val repository: GameRepository
+    private val repository: GameRepository,
+    private val genreService: GenreService,
+    private val companyService: CompanyService
 ) : GameService {
 
     override fun getAll(): List<Game> = repository.findAll()
 
     override fun get(id: Long): Game = repository
         .findById(id)
-        .orElseThrow { NotFoundException("Can't find gake with id $id") }
+        .orElseThrow { NotFoundException("Can't find game with id $id") }
 
     @Transactional
-    override fun create(request: CreateGameRequest): Game = repository.save(Game(request.name))
+    override fun create(request: CreateGameRequest): Game = repository.save(Game(
+        request.name,
+        genreService.get(request.genreId),
+        companyService.get(request.companyId)
+    ))
 
     @Transactional
     override fun like(id: Long, user: User): Game {
