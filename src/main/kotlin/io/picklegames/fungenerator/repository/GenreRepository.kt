@@ -1,7 +1,5 @@
 package io.picklegames.fungenerator.repository
 
-import io.picklegames.fungenerator.entity.Company
-import io.picklegames.fungenerator.entity.Game
 import io.picklegames.fungenerator.entity.Genre
 import org.springframework.data.neo4j.repository.Neo4jRepository
 
