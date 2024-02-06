@@ -1,6 +1,7 @@
 package io.picklegames.fungenerator.service
 
 import io.picklegames.fungenerator.dto.RateRequest
+import io.picklegames.fungenerator.dto.SearchGamesRequest
 import io.picklegames.fungenerator.entity.Game
 import io.picklegames.fungenerator.entity.Rating
 import io.picklegames.fungenerator.entity.User
@@ -15,7 +16,7 @@ class DefaultGameService(
     private val repository: GameRepository
 ) : GameService {
 
-    override fun getAll(): List<Game> = repository.findAll()
+    override fun search(request: SearchGamesRequest): List<Game> = repository.search(request)
 
     override fun get(id: Long): Game = repository
         .findById(id)

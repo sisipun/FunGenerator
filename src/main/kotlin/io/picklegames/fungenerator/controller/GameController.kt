@@ -2,6 +2,7 @@ package io.picklegames.fungenerator.controller
 
 import io.picklegames.fungenerator.dto.GameDto
 import io.picklegames.fungenerator.dto.RateRequest
+import io.picklegames.fungenerator.dto.SearchGamesRequest
 import io.picklegames.fungenerator.entity.Game
 import io.picklegames.fungenerator.service.GameService
 import io.picklegames.fungenerator.service.UserService
@@ -15,12 +16,14 @@ class GameController(
     private val userService: UserService
 ) {
 
-    @GetMapping
-    fun getAll(): List<GameDto> = service.getAll().map { GameDto(it.id!!, it.name) }
+    @PostMapping("/search")
+    fun search(
+        @Valid @RequestBody request: SearchGamesRequest
+    ): List<GameDto> = service.search(request).map { GameDto(it.id!!, it.name) }
 
-    @PostMapping("{id}/like")
-    fun like(@PathVariable id: Long): GameDto {
-        val game: Game = service.like(id, userService.get(0));
+    @PostMapping("{id}/like/{userId}")
+    fun like(@PathVariable id: Long, @PathVariable userId: Long): GameDto {
+        val game: Game = service.like(id, userService.get(userId));
         return GameDto(game.id!!, game.name)
     }
 
