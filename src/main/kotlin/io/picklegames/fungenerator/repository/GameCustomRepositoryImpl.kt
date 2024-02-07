@@ -21,11 +21,11 @@ class GameCustomRepositoryImpl(
                 game.property("name").contains(Cypher.literalOf<String>(request.name))
             )
         }
-        if (request.genreId != null) {
-            val genre = Cypher.node(Nodes.GENRE).named("gen")
-            relationships.add(game.relationshipTo(genre, Relations.IS))
+        if (request.tagId != null) {
+            val tag = Cypher.node(Nodes.TAG).named("tag")
+            relationships.add(game.relationshipTo(tag, Relations.HAS))
             condition = condition.and(
-                genre.elementId().eq(Cypher.literalOf<String>(request.genreId.toString()))
+                tag.elementId().eq(Cypher.literalOf<String>(request.tagId.toString()))
             )
         }
         if (request.companyId != null) {

@@ -6,95 +6,115 @@ import io.picklegames.fungenerator.entity.Nodes
 import io.picklegames.fungenerator.entity.Relations
 import org.neo4j.cypherdsl.core.Cypher
 import org.neo4j.cypherdsl.core.Node
+import kotlin.random.Random
 
 class V001__InitData : JavaBasedMigration {
 
     override fun apply(context: MigrationContext?) {
-        context?.session.use {session -> ;
-            val alex: Node = Cypher.node(Nodes.USER)
-                .withProperties("name", Cypher.literalOf<String>("Alex"))
-                .named("alex")
-            val max: Node = Cypher.node(Nodes.USER)
-                .withProperties("name", Cypher.literalOf<String>("Max"))
-                .named("max")
-            val john: Node = Cypher.node(Nodes.USER)
-                .withProperties("name", Cypher.literalOf<String>("John"))
-                .named("john")
+        context?.session.use { session ->
+            val users: MutableSet<Node> = mutableSetOf()
+            for (i in 1..50000) {
+                val name = "user_$i"
+                val user = Cypher.node(Nodes.USER)
+                    .withProperties("name", Cypher.literalOf<String>(name))
+                    .named(name)
+                users.add(user)
+                session?.run(Cypher.create(user).build().cypher)
+            }
 
-            val ea: Node = Cypher.node(Nodes.COMPANY)
-                .withProperties("name", Cypher.literalOf<String>("Electronic Arts"))
-                .named("ea")
-            val ubisoft: Node = Cypher.node(Nodes.COMPANY)
-                .withProperties("name", Cypher.literalOf<String>("Ubisoft"))
-                .named("ubisoft")
-            val cdProjectRed: Node = Cypher.node(Nodes.COMPANY)
-                .withProperties("name", Cypher.literalOf<String>("Cd Project Red"))
-                .named("cdProjectRed")
+            val companies: MutableSet<Node> = mutableSetOf()
+            for (i in 1..50000) {
+                val name = "company_$i"
+                val company = Cypher.node(Nodes.COMPANY)
+                    .withProperties("name", Cypher.literalOf<String>(name))
+                    .named(name)
+                companies.add(company)
+                session?.run(Cypher.create(company).build().cypher)
+            }
 
-            val shooter: Node = Cypher.node(Nodes.GENRE)
-                .withProperties("name", Cypher.literalOf<String>("Shooter"))
-                .named("shooter")
-            val action: Node = Cypher.node(Nodes.GENRE)
-                .withProperties("name", Cypher.literalOf<String>("Action"))
-                .named("action")
-            val rpg: Node = Cypher.node(Nodes.GENRE)
-                .withProperties("name", Cypher.literalOf<String>("RPG"))
-                .named("rpg")
+            val tags: MutableSet<Node> = mutableSetOf()
+            for (i in 1..50000) {
+                val name = "tags_$i"
+                val tag = Cypher.node(Nodes.TAG)
+                    .withProperties("name", Cypher.literalOf<String>(name))
+                    .named(name)
+                tags.add(tag)
+                session?.run(Cypher.create(tag).build().cypher)
+            }
 
-            val witcher: Node = Cypher.node(Nodes.GAME)
-                .withProperties("name", Cypher.literalOf<String>("Witcher"))
-                .named("witcher")
-            val battlefield: Node = Cypher.node(Nodes.GAME)
-                .withProperties("name", Cypher.literalOf<String>("Battlefield"))
-                .named("battlefield")
-            val assassinsCreed: Node = Cypher.node(Nodes.GAME)
-                .withProperties("name", Cypher.literalOf<String>("Assassins Creed"))
-                .named("assassinsCreed")
-            val massEffect: Node = Cypher.node(Nodes.GAME)
-                .withProperties("name", Cypher.literalOf<String>("Mass Effect"))
-                .named("massEffect")
+            val games: MutableSet<Node> = mutableSetOf()
+            for (i in 1..50000) {
+                val name = "game_$i"
+                val game = Cypher.node(Nodes.GAME)
+                    .withProperties("name", Cypher.literalOf<String>(name))
+                    .named(name)
+                games.add(game)
+                session?.run(Cypher.create(game).build().cypher)
+            }
 
-            val query = setOf(
-                alex,
-                max,
-                john,
-                ea,
-                ubisoft,
-                cdProjectRed,
-                shooter,
-                action,
-                rpg,
-                witcher,
-                battlefield,
-                assassinsCreed,
-                massEffect,
-                Cypher.anyNode("battlefield").relationshipFrom(Cypher.anyNode("ea"), Relations.CREATED),
-                Cypher.anyNode("assassinsCreed").relationshipFrom(Cypher.anyNode("ubisoft"), Relations.CREATED),
-                Cypher.anyNode("massEffect").relationshipFrom(Cypher.anyNode("ea"), Relations.CREATED),
-                Cypher.anyNode("witcher").relationshipFrom(Cypher.anyNode("cdProjectRed`"), Relations.CREATED),
-                Cypher.anyNode("witcher").relationshipTo(Cypher.anyNode("action"), Relations.IS),
-                Cypher.anyNode("witcher").relationshipTo(Cypher.anyNode("rpg"), Relations.IS),
-                Cypher.anyNode("battlefield").relationshipTo(Cypher.anyNode("shooter"), Relations.IS),
-                Cypher.anyNode("assassinsCreed").relationshipTo(Cypher.anyNode("action"), Relations.IS),
-                Cypher.anyNode("massEffect").relationshipTo(Cypher.anyNode("action"), Relations.IS),
-                Cypher.anyNode("massEffect").relationshipTo(Cypher.anyNode("rpg"), Relations.IS),
-                Cypher.anyNode("witcher").relationshipFrom(Cypher.anyNode("john"), Relations.LIKES),
-                Cypher.anyNode("witcher").relationshipFrom(Cypher.anyNode("alex"), Relations.LIKES),
-                Cypher.anyNode("witcher").relationshipFrom(Cypher.anyNode("max"), Relations.LIKES),
-                Cypher.anyNode("battlefield").relationshipFrom(Cypher.anyNode("max"), Relations.LIKES),
-                Cypher.anyNode("assassinsCreed").relationshipFrom(Cypher.anyNode("john"), Relations.LIKES),
-                Cypher.anyNode("massEffect").relationshipFrom(Cypher.anyNode("alex"), Relations.LIKES),
-                Cypher.anyNode("massEffect").relationshipFrom(Cypher.anyNode("john"), Relations.LIKES),
-                Cypher.anyNode("witcher").relationshipFrom(Cypher.anyNode("john"), Relations.HAS),
-                Cypher.anyNode("witcher").relationshipFrom(Cypher.anyNode("max"), Relations.HAS),
-                Cypher.anyNode("battlefield").relationshipFrom(Cypher.anyNode("max"), Relations.HAS),
-                Cypher.anyNode("battlefield").relationshipFrom(Cypher.anyNode("john"), Relations.HAS),
-                Cypher.anyNode("assassinsCreed").relationshipFrom(Cypher.anyNode("alex"), Relations.HAS),
-                Cypher.anyNode("assassinsCreed").relationshipFrom(Cypher.anyNode("john"), Relations.HAS),
-                Cypher.anyNode("massEffect").relationshipFrom(Cypher.anyNode("john"), Relations.HAS)
-            ).joinToString("\n") { Cypher.create(it).build().cypher }
+            for (i in 1..5000) {
+                val gameId: Int = Random.nextInt(1, 50000)
+                val companyId: Int = Random.nextInt(1, 50000)
+                val game: Node = Cypher.node(Nodes.GAME).named("g")
+                val company: Node = Cypher.node(Nodes.COMPANY).named("c")
+                val relation = Cypher
+                    .match(game)
+                    .where(game.property("name").eq(Cypher.literalOf<String>("game_$gameId")))
+                    .match(company)
+                    .where(company.property("name").eq(Cypher.literalOf<String>("company_$companyId")))
+                    .create(
+                        Cypher.anyNode("g").relationshipFrom(Cypher.anyNode("c"), Relations.CREATED)
+                    )
+                session?.run(relation.build().cypher)
+            }
 
-            session?.run(query)
+            for (i in 1..5000) {
+                val gameId: Int = Random.nextInt(1, 50000)
+                val tagId: Int = Random.nextInt(1, 50000)
+                val game: Node = Cypher.node(Nodes.GAME).named("g")
+                val tag: Node = Cypher.node(Nodes.TAG).named("t")
+                val relation = Cypher
+                    .match(game)
+                    .where(game.property("name").eq(Cypher.literalOf<String>("game_$gameId")))
+                    .match(tag)
+                    .where(tag.property("name").eq(Cypher.literalOf<String>("tag_$tagId")))
+                    .create(
+                        Cypher.anyNode("g").relationshipTo(Cypher.anyNode("t"), Relations.HAS)
+                    )
+                session?.run(relation.build().cypher)
+            }
+
+            for (i in 1..5000) {
+                val gameId: Int = Random.nextInt(1, 50000)
+                val userId: Int = Random.nextInt(1, 50000)
+                val game: Node = Cypher.node(Nodes.GAME).named("g")
+                val user: Node = Cypher.node(Nodes.USER).named("u")
+                val relation = Cypher
+                    .match(game)
+                    .where(game.property("name").eq(Cypher.literalOf<String>("game_$gameId")))
+                    .match(user)
+                    .where(user.property("user").eq(Cypher.literalOf<String>("user_$userId")))
+                    .create(
+                        Cypher.anyNode("g").relationshipFrom(Cypher.anyNode("u"), Relations.LIKES)
+                    )
+                session?.run(relation.build().cypher)
+            }
+
+            for (i in 1..5000) {
+                val gameId: Int = Random.nextInt(1, 50000)
+                val userId: Int = Random.nextInt(1, 50000)
+                val game: Node = Cypher.node(Nodes.GAME).named("g")
+                val user: Node = Cypher.node(Nodes.USER).named("u")
+                val relation = Cypher
+                    .match(game)
+                    .where(game.property("name").eq(Cypher.literalOf<String>("game_$gameId")))
+                    .match(user)
+                    .where(user.property("user").eq(Cypher.literalOf<String>("user_$userId")))
+                    .create(
+                        Cypher.anyNode("g").relationshipFrom(Cypher.anyNode("u"), Relations.HAS)
+                    )
+                session?.run(relation.build().cypher)
+            }
         }
     }
 }

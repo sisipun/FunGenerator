@@ -2,6 +2,6 @@ package io.picklegames.fungenerator.dto
 
 class SearchGamesRequest(
     var name: String?,
-    var genreId: Long?,
+    var tagId: Long?,
     var companyId: Long?
 )
