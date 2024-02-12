@@ -12,14 +12,12 @@ class GameCustomRepositoryImpl(
 ) : GameCustomRepository {
 
     override fun search(request: SearchGamesRequest): List<Game> {
-        val game: Node = Cypher.node(Nodes.GAME).named("g")
+        var game: Node = Cypher.node(Nodes.GAME).named("g")
         var condition: Condition = Conditions.noCondition()
         val relationships: MutableSet<Relationship> = mutableSetOf()
 
         if (request.name != null) {
-            condition = condition.and(
-                game.property("name").contains(Cypher.literalOf<String>(request.name))
-            )
+            game = game.withProperties("name", Cypher.literalOf<String>(request.name))
         }
         if (request.tagId != null) {
             val tag = Cypher.node(Nodes.TAG).named("tag")

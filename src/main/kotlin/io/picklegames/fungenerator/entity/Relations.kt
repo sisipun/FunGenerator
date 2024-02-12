@@ -5,4 +5,5 @@ object Relations {
     const val LIKES: String = "LIKES"
     const val HAS: String = "HAS"
     const val RATED: String = "RATED"
+    const val TO: String = "TO"
 }
