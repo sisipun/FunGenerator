@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: neo4j-deployment
+  labels:
+    app: neo4j
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: neo4j
+  template:
+    metadata:
+      labels:
+        app: neo4j
+    spec:
+      containers:
+        - name: neo4j
+          image: neo4j:community
+          ports:
+            - containerPort: 7687
+          env:
+            - name: NEO4J_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: neo4j-secret
+                  key: neo4j-user
+            - name: NEO4J_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: neo4j-secret
+                  key: neo4j-password
+            - name: NEO4J_AUTH
+              value: $(NEO4J_USERNAME)/$(NEO4J_PASSWORD)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: neo4j-service
+spec:
+  selector:
+    app: neo4j
+  ports:
+    - protocol: TCP
+      port: 7687
+      targetPort: 7687

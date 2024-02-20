@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fungenerator-deployment
+  labels:
+    app: fungenerator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fungenerator
+  template:
+    metadata:
+      labels:
+        app: fungenerator
+    spec:
+      containers:
+        - name: fungenerator
+          image: sisipun/fungenerator:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: NEO4J_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: neo4j-config
+                  key: neo4j-url
+            - name: NEO4J_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: neo4j-secret
+                  key: neo4j-user
+            - name: NEO4J_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: neo4j-secret
+                  key: neo4j-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fungenerator-service
+spec:
+  type: NodePort
+  selector:
+    app: fungenerator
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30300
