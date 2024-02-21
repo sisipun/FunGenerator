@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: fungenerator
-          image: sisipun/fungenerator:latest
+          image: sisipun/fungenerator:v1.0
           ports:
             - containerPort: 8080
           env:
